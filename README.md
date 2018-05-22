@@ -3,7 +3,7 @@
 Speed and precision are essential to get a good score.
 
 ## How to play
-Move pointer with the mouse and press left button to shoot the targets.
+Move the pointer with the mouse and press left button to shoot the targets.
 The distance to the target center, and the shot time determine our score.
 ### Bonus:
 - Distance to target center < 5px : +400 points

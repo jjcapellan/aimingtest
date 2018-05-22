@@ -90,6 +90,7 @@ aimingtest.inGame = function (game) {};
 aimingtest.inGame.prototype = function (game) {};
 
 aimingtest.inGame.prototype = {
+
     create: function () {
         // Arrays initialization
         this.shotsArray = [];
@@ -135,8 +136,6 @@ aimingtest.inGame.prototype = {
         this.emitter = this.add.emitter();
         this.emitter.makeParticles(['particle1', 'particle2', 'particle3']);
         this.emitter.gravity = 0;
-        /*this.emitter.minAngle=0;
-        this.emitter.maxAngle=340;*/
         this.emitter.minSpeed = 600;
         this.emitter.maxParticleSpeed = new Phaser.Point(800, 800);
         this.emitter.minParticleSpeed = new Phaser.Point(-800, -800);
@@ -180,6 +179,11 @@ aimingtest.inGame.prototype = {
                 // Check possible hit
                 if (isHit && distance < 70) {
 
+                    // Stops time to new target reset
+                    t.clearTimer();
+                    // Hidden target
+                    t.target.visible = false;
+
                     // Hit time stamp
                     var targetHitTime = performance.now();
                     //Play hit
@@ -206,8 +210,7 @@ aimingtest.inGame.prototype = {
                     // New hit in the hits array
                     t.hitsArray.push([t.hitsCounter, timeSpan + ' ms', distance + ' px', hitScore + ' pts']);
                     // Reset target in new position
-                    t.clearTimer();
-                    t.target.visible = false;
+                    
                     if (this.targetsCounter == 10) {
                         this.gameOver();
                         return;
@@ -262,6 +265,9 @@ aimingtest.inGame.prototype = {
     },
 
     gameOver: function () {
+
+        //clear inputDown to avoid exit before see results
+        this.input.onDown.removeAll();
 
         this.setTotalScore();
 
@@ -356,8 +362,7 @@ aimingtest.inGame.prototype = {
 
         document.getElementById('replay').innerHTML = 'Click to replay';
 
-        // Changes onDown event
-        this.input.onDown.removeAll();
+        // Changes onDown event        
         this.input.onDown.add(this.replay, this);
 
     },

@@ -2,6 +2,8 @@
 **Aiming Test** is a small challenge that tests our dexterity with the mouse.
 Speed and precision are essential to get a good score.
 
+[Play the game here](https://jjcapellan.github.io/aimingtest/)
+
 ## How to play
 Move the pointer with the mouse and press left button to shoot the targets.
 The distance to the target center, and the shot time determine our score.

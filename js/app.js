@@ -16,7 +16,7 @@ aimingtest.boot = function (game) {};
 aimingtest.boot.prototype = function (game) {};
 
 aimingtest.boot.prototype = {
-    
+
     preload: function () {
 
         this.load.image('target', 'assets/images/target.png');
@@ -50,7 +50,7 @@ aimingtest.menu.prototype = {
     create: function () {
 
         this.stage.backgroundColor = 'rgb(106,98,60)';
-        document.getElementById('display').innerHTML='AIMING TEST V1.0';
+        document.getElementById('display').innerHTML = 'AIMING TEST V1.0';
         var text;
         var textStyle = {
             font: "bold 32px Arial",
@@ -96,7 +96,7 @@ aimingtest.inGame.prototype = {
         this.shotsArray = [];
         this.hitsArray = [];
         //Best score initialization
-        var cookie = this.getCookie('best');
+        var cookie = this.getCookie('aimingTestBest');
         this.bestScore = (cookie != '') ? parseInt(cookie) : 0;
         // Display html element
         this.display = document.getElementById('display');
@@ -143,7 +143,7 @@ aimingtest.inGame.prototype = {
         this.emitter.lifespan = 1000;
         this.emitter.height = 90;
         this.emitter.width = 90;
-        this.emitter.maxParticles=30;
+        this.emitter.maxParticles = 30;
 
         //Sound effects
         this.sndShot = this.add.audio('shot', 1, false);
@@ -210,7 +210,7 @@ aimingtest.inGame.prototype = {
                     // New hit in the hits array
                     t.hitsArray.push([t.hitsCounter, timeSpan + ' ms', distance + ' px', hitScore + ' pts']);
                     // Reset target in new position
-                    
+
                     if (this.targetsCounter == 10) {
                         this.gameOver();
                         return;
@@ -274,7 +274,7 @@ aimingtest.inGame.prototype = {
         // Check new record
         if (this.bestScore < this.totalScore) {
             this.display.innerHTML = 'You got a new record !!!';
-            this.setCookie('best',this.totalScore,180);
+            this.setCookie('aimingTestBest', this.totalScore, 180);
 
         } else {
             this.display.innerHTML = 'Your best score is ' + this.bestScore.toString();
@@ -285,7 +285,7 @@ aimingtest.inGame.prototype = {
     },
 
     setTotalScore: function () {
-        this.totalScore = this.score + this.bonusDistanceCounter * this.pointsDistanceBonus + this.bonusTimeCounter * this.pointsTimeBonus - this.failedShotsCounter * 400;        
+        this.totalScore = this.score + this.bonusDistanceCounter * this.pointsDistanceBonus + this.bonusTimeCounter * this.pointsTimeBonus - this.failedShotsCounter * 400;
     },
 
     showResults: function () {
@@ -362,8 +362,14 @@ aimingtest.inGame.prototype = {
 
         document.getElementById('replay').innerHTML = 'Click to replay';
 
-        // Changes onDown event        
-        this.input.onDown.add(this.replay, this);
+
+        // Changes onDown event in 1.5 seconds to avoid exit before see results
+        var t = this;
+        setTimeout(
+            function () {
+                t.input.onDown.add(t.replay, t);
+            },
+            1500);
 
     },
 

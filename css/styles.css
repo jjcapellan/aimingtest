@@ -11,9 +11,10 @@ body {
 }
 
 #header{
-    position:fixed;
-    top:5%;
+    /*position:fixed;
+    top:5%;*/
     width:100%;
+    height: 50px;
     font-size: 2em;
     font-weight: bold;
     color:rgb(224, 207, 129);
@@ -24,11 +25,12 @@ body {
     position: fixed;
     top: 50%;
     left: 50%;
-    margin-top: -270px;
+    margin-top: -320px;
     margin-left: -480px;
 }
 
 #overlay {
+    position: absolute;
     pointer-events: none;
     padding: 10px;
 }

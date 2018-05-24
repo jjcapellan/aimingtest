@@ -244,7 +244,7 @@ aimingtest.inGame.prototype = {
         this.target.reset(this.math.between(80, 960 - 80), this.math.between(80, 540 - 80));
         this.targetStartTime = performance.now();
         this.setTimer();
-        this.display.innerHTML = (10 - this.targetsCounter) + ' targets left';
+        this.display.innerHTML = (10 - this.targetsCounter) + ' targets left';        
     },
 
     setTimer: function () {

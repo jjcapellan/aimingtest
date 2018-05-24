@@ -164,6 +164,8 @@ aimingtest.inGame.prototype = {
 
             // Check reloadTime
             if (!t.reloadTime) {
+                // Hit time stamp
+                var targetHitTime = performance.now();
                 // This prevents multiple shots in a short time.
                 t.reloadTime = true;
                 // Target position (x,y)
@@ -177,15 +179,12 @@ aimingtest.inGame.prototype = {
                 t.shotsArray.push(distance);
 
                 // Check possible hit
-                if (isHit && distance < 70) {
-
+                if (isHit && distance < 70) {                       
+                                        
                     // Stops time to new target reset
                     t.clearTimer();
                     // Hidden target
-                    t.target.visible = false;
-
-                    // Hit time stamp
-                    var targetHitTime = performance.now();
+                    t.target.visible = false;                    
                     //Play hit
                     t.sndHit.play();
                     // Explosion
@@ -235,6 +234,7 @@ aimingtest.inGame.prototype = {
     },
 
     resetTarget: function () {
+        this.target.visible=false;
         if (this.targetsCounter == 10) {
             this.gameOver();
             return;

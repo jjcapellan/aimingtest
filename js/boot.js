@@ -1,6 +1,3 @@
-var globals = {
-    mode: null
-}
 
 var aimingtest = {};
 

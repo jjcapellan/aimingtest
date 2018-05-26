@@ -8,16 +8,16 @@ aimingtest.evasionMode.prototype = {
 
     create: function () {
         // Is evading
-        this.isEvading=false;
+        this.isEvading = false;
         // Evasion tween
-        this.evasionTween=null;
+        this.evasionTween = null;
         // EvasionPoint
-        this.evasionPoint=new Phaser.Point();
+        this.evasionPoint = new Phaser.Point();
         // Arrays initialization
         this.shotsArray = [];
         this.hitsArray = [];
         //Best score initialization
-        var cookie = this.getCookie('aimingEvasionBest1');
+        var cookie = globals.getCookie('aimingEvasionBest1');
         this.bestScore = (cookie != '') ? parseInt(cookie) : 0;
         // Display html element
         this.display = document.getElementById('display');
@@ -27,9 +27,9 @@ aimingtest.evasionMode.prototype = {
         // True when reloading
         this.reloadTime = false;
         // Target sprite
-        this.target;        
+        this.target;
         // Evasion rectangle
-        this.evasionRectangle=new Phaser.Rectangle();
+        this.evasionRectangle = new Phaser.Rectangle();
         // Hits counter
         this.hitsCounter = 0;
         // Targets counter
@@ -54,16 +54,7 @@ aimingtest.evasionMode.prototype = {
         var t = this;
 
         // Particles emitter
-        this.emitter = this.add.emitter();
-        this.emitter.makeParticles('atl_game',['particle1c', 'particle2c', 'particle3c'],30);
-        this.emitter.gravity = 0;
-        this.emitter.minSpeed = 600;
-        this.emitter.maxParticleSpeed = new Phaser.Point(800, 800);
-        this.emitter.minParticleSpeed = new Phaser.Point(-800, -800);
-        this.emitter.alpha = 0.5;
-        this.emitter.lifespan = 1000;
-        this.emitter.height = 90;
-        this.emitter.width = 90;
+        this.emitter = globals.getEmitter(this.game);
 
         //Sound effects
         this.sndShot = this.add.audio('shot', 1, false);
@@ -71,9 +62,9 @@ aimingtest.evasionMode.prototype = {
         this.sndTarget = this.add.audio('spawn', 1, false);
 
         //Target sprite definition
-        this.target = this.add.sprite(this.math.between(80, 960 - 80), this.math.between(80, 540 - 80),'atl_game', 'targetc');
+        this.target = this.add.sprite(this.math.between(80, 960 - 80), this.math.between(80, 540 - 80), 'atl_game', 'targetc');
         this.target.anchor.setTo(0.5, 0.5);
-        this.target.radio=this.target.height/2;
+        this.target.radio = this.target.height / 2;
         this.target.inputEnabled = true;
         this.target.visible = false;
 
@@ -95,7 +86,7 @@ aimingtest.evasionMode.prototype = {
                 //Play sound
                 t.sndShot.play();
                 // Distance between mouse pointer and target
-                var distance = parseInt(t.getDistance(pointerPosition, targetPosition));
+                var distance = parseInt(globals.getDistance(pointerPosition, targetPosition));
                 // New shot in shotsArray
                 t.shotsArray.push(distance);
 
@@ -104,7 +95,7 @@ aimingtest.evasionMode.prototype = {
                     // Destroy actual tween  
                     this.evasionTween.stop();
                     // Hidden target
-                    t.target.visible = false;                    
+                    t.target.visible = false;
                     //Play hit
                     t.sndHit.play();
                     // Explosion
@@ -151,29 +142,34 @@ aimingtest.evasionMode.prototype = {
 
     },
 
-    update: function(){
+    update: function () {
 
-        if(!this.isEvading){
+        if (!this.isEvading) {
 
-            var pointerPosition=this.input.position;            
-            var dx=this.input.x-this.target.x;            
-            var dy=this.input.y-this.target.y;
+            var pointerPosition = this.input.position;
+            var dx = this.input.x - this.target.x;
+            var dy = this.input.y - this.target.y;
             // If pointer is near target generates an evasion movement
-            if(300*300>(dx*dx + dy*dy)){
-                this.isEvading=true;
+            if (300 * 300 > (dx * dx + dy * dy)) {
+                this.isEvading = true;
                 this.setEvasionRectangle(pointerPosition);
-                var t=this;              
+                var t = this;
                 this.evasionRectangle.random(t.evasionPoint)
-                this.evasionTween=this.add.tween(this.target).to({x: Math.ceil(t.evasionPoint.x), y: Math.ceil(t.evasionPoint.y)}, 500).start();
-                setTimeout(function(){t.isEvading=false;},800);
+                this.evasionTween = this.add.tween(this.target).to({
+                    x: Math.ceil(t.evasionPoint.x),
+                    y: Math.ceil(t.evasionPoint.y)
+                }, 500).start();
+                setTimeout(function () {
+                    t.isEvading = false;
+                }, 800);
             };
         }
-        
+
     },
 
     resetTarget: function () {
 
-        this.target.visible=false;
+        this.target.visible = false;
         if (this.targetsCounter == 10) {
             this.gameOver();
             return;
@@ -182,75 +178,68 @@ aimingtest.evasionMode.prototype = {
         this.sndTarget.play();
         this.target.reset(this.math.between(80, 960 - 80), this.math.between(80, 540 - 80));
         this.targetStartTime = performance.now();
-        this.display.innerHTML = (10 - this.targetsCounter) + ' targets left';        
+        this.display.innerHTML = (10 - this.targetsCounter) + ' targets left';
     },
 
-    getDistance: function (pointA, pointB) {
 
-        var dx = pointA.x - pointB.x;
-        var dy = pointA.y - pointB.y;
-        var distance = Math.sqrt(dx * dx + dy * dy);
-        return distance;
+    /**
+     * Build the rectangle from which a random point will be taken as destination of the target.
+     * To do this, modifies the properties of evasionRectangle.
+     * 
+     * @param {Point} pointerPosition 
+     */
+    setEvasionRectangle: function (pointerPosition) {
 
-    },
-/**
- * Build the rectangle from which a random point will be taken as destination of the target.
- * To do this, modifies the properties of evasionRectangle.
- * 
- * @param {Point} pointerPosition 
- */
-setEvasionRectangle: function(pointerPosition){        
-        
-        if(this.target.x>pointerPosition.x){            
+        if (this.target.x > pointerPosition.x) {
 
-            if(this.target.y<pointerPosition.y){
+            if (this.target.y < pointerPosition.y) {
 
-                this.evasionRectangle.x=(Math.random()>0.5)?this.target.x:(0+this.target.radio);                
-                this.evasionRectangle.y=this.target.radio;
+                this.evasionRectangle.x = (Math.random() > 0.5) ? this.target.x : (0 + this.target.radio);
+                this.evasionRectangle.y = this.target.radio;
 
-                if(this.evasionRectangle.x>this.target.radio){                    
-                    this.evasionRectangle.width=this.world.width-this.target.x-this.target.radio;
-                    this.evasionRectangle.height=this.world.height-this.target.radio;
+                if (this.evasionRectangle.x > this.target.radio) {
+                    this.evasionRectangle.width = this.world.width - this.target.x - this.target.radio;
+                    this.evasionRectangle.height = this.world.height - this.target.radio;
                 } else {
-                    this.evasionRectangle.width=this.target.x - this.target.radio;
-                    this.evasionRectangle.height=this.target.y - this.target.radio;
+                    this.evasionRectangle.width = this.target.x - this.target.radio;
+                    this.evasionRectangle.height = this.target.y - this.target.radio;
                 };
             } else {
-                this.evasionRectangle.y=(Math.random()>0.5)?this.target.y:this.target.radio;
-                
-                if(this.evasionRectangle.y>this.target.radio){
-                    this.evasionRectangle.x=this.target.radio;
-                    this.evasionRectangle.width=this.world.width-this.target.width;
-                    this.evasionRectangle.height=this.world.height-this.target.y-this.target.radio;
+                this.evasionRectangle.y = (Math.random() > 0.5) ? this.target.y : this.target.radio;
+
+                if (this.evasionRectangle.y > this.target.radio) {
+                    this.evasionRectangle.x = this.target.radio;
+                    this.evasionRectangle.width = this.world.width - this.target.width;
+                    this.evasionRectangle.height = this.world.height - this.target.y - this.target.radio;
                 } else {
-                    this.evasionRectangle.x=this.target.x;
-                    this.evasionRectangle.width=this.world.width-this.target.x-this.target.radio;
-                    this.evasionRectangle.height=this.target.y-this.target.radio;
+                    this.evasionRectangle.x = this.target.x;
+                    this.evasionRectangle.width = this.world.width - this.target.x - this.target.radio;
+                    this.evasionRectangle.height = this.target.y - this.target.radio;
                 };
             };
         } else {
 
-            this.evasionRectangle.x= this.target.radio;
+            this.evasionRectangle.x = this.target.radio;
 
-            if(this.target.y<pointerPosition.y){                
-                this.evasionRectangle.y= this.target.radio;
-                this.evasionRectangle.width=(Math.random()>0.5)?(this.world.width-this.target.width):(this.target.x-this.target.radio);
+            if (this.target.y < pointerPosition.y) {
+                this.evasionRectangle.y = this.target.radio;
+                this.evasionRectangle.width = (Math.random() > 0.5) ? (this.world.width - this.target.width) : (this.target.x - this.target.radio);
 
-                if(this.evasionRectangle.width== (this.target.x-this.target.radio)){
-                    this.evasionRectangle.height=this.world.height-this.target.height;
+                if (this.evasionRectangle.width == (this.target.x - this.target.radio)) {
+                    this.evasionRectangle.height = this.world.height - this.target.height;
                 } else {
-                    this.evasionRectangle.height=this.target.y-this.target.radio;
+                    this.evasionRectangle.height = this.target.y - this.target.radio;
                 };
 
             } else {
-                this.evasionRectangle.y=(Math.random()>0.5)?this.target.radio:this.target.y;
+                this.evasionRectangle.y = (Math.random() > 0.5) ? this.target.radio : this.target.y;
 
-                if(this.evasionRectangle.y==this.target.radio){
-                    this.evasionRectangle.width=this.target.x-this.target.radio;
-                    this.evasionRectangle.height=this.world.height-this.target.radio;
+                if (this.evasionRectangle.y == this.target.radio) {
+                    this.evasionRectangle.width = this.target.x - this.target.radio;
+                    this.evasionRectangle.height = this.world.height - this.target.radio;
                 } else {
-                    this.evasionRectangle.width=this.world.width-this.target.radio;
-                    this.evasionRectangle.height=this.world.height-this.target.y-this.target.radio;
+                    this.evasionRectangle.width = this.world.width - this.target.radio;
+                    this.evasionRectangle.height = this.world.height - this.target.y - this.target.radio;
                 };
             };
         };
@@ -261,17 +250,17 @@ setEvasionRectangle: function(pointerPosition){
 
         //clear inputDown to avoid exit before see results
         this.input.onDown.removeAll();
-        this.target.visible=false;
+        this.target.visible = false;
 
         this.setTotalScore();
 
         // Check new record
         if (this.bestScore < this.totalScore) {
             this.display.innerHTML = 'You got a new record in Evasion mode!!!';
-            this.setCookie('aimingEvasionBest1', this.totalScore, 180);
+            globals.setCookie('aimingEvasionBest1', this.totalScore, 180);
 
         } else {
-            this.display.innerHTML = 'Your best score is ' + this.bestScore.toString()+' (Evasion mode)';
+            this.display.innerHTML = 'Your best score is ' + this.bestScore.toString() + ' (Evasion mode)';
         };
 
         this.showResults();
@@ -373,31 +362,10 @@ setEvasionRectangle: function(pointerPosition){
         tableResults.style.opacity = 0;
         tableResults.innerHTML = '';
         document.getElementById('replay').innerHTML = '';
-        // starts menu state
+        // Destroy emitter
+        this.emitter.destroy();
+        // Starts menu state
         this.state.start('menu');
-    },
-
-    setCookie: function (c_name, c_value, c_days) {
-        var d = new Date();
-        d.setTime(d.getTime() + (c_days * 24 * 60 * 60 * 1000));
-        var expires = "expires=" + d.toUTCString();
-        document.cookie = c_name + "=" + c_value + ";" + expires + ";path=/";
-    },
-
-    getCookie: function (c_name) {
-        var name = c_name + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
     }
 
 

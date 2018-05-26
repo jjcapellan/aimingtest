@@ -14,7 +14,7 @@ aimingtest.basicMode.prototype = {
         this.shotsArray = [];
         this.hitsArray = [];
         //Best score initialization
-        var cookie = this.getCookie('aimingTestBest');
+        var cookie = globals.getCookie('aimingTestBest');
         this.bestScore = (cookie != '') ? parseInt(cookie) : 0;
         // Display html element
         this.display = document.getElementById('display');
@@ -51,16 +51,7 @@ aimingtest.basicMode.prototype = {
         var t = this;
 
         // Particles emitter
-        this.emitter = this.add.emitter();
-        this.emitter.makeParticles('atl_game',['particle1c', 'particle2c', 'particle3c'],30);
-        this.emitter.gravity = 0;
-        this.emitter.minSpeed = 600;
-        this.emitter.maxParticleSpeed = new Phaser.Point(800, 800);
-        this.emitter.minParticleSpeed = new Phaser.Point(-800, -800);
-        this.emitter.alpha = 0.5;
-        this.emitter.lifespan = 1000;
-        this.emitter.height = 90;
-        this.emitter.width = 90;
+        this.emitter = globals.getEmitter(this.game);
 
         //Sound effects
         this.sndShot = this.add.audio('shot', 1, false);
@@ -92,7 +83,7 @@ aimingtest.basicMode.prototype = {
                 //Play sound
                 t.sndShot.play();
                 // Distance between mouse pointer and target
-                var distance = parseInt(t.getDistance(pointerPosition, targetPosition));
+                var distance = parseInt(globals.getDistance(pointerPosition, targetPosition));
                 // New shot in shotsArray
                 t.shotsArray.push(distance);
 
@@ -173,15 +164,6 @@ aimingtest.basicMode.prototype = {
         clearTimeout(this.targetTimer);
     },
 
-    getDistance: function (pointA, pointB) {
-
-        var dx = pointA.x - pointB.x;
-        var dy = pointA.y - pointB.y;
-        var distance = Math.sqrt(dx * dx + dy * dy);
-        return distance;
-
-    },
-
     gameOver: function () {
 
         //clear inputDown to avoid exit before see results
@@ -192,7 +174,7 @@ aimingtest.basicMode.prototype = {
         // Check new record
         if (this.bestScore < this.totalScore) {
             this.display.innerHTML = 'You got a new record !!! (normal mode)';
-            this.setCookie('aimingTestBest', this.totalScore, 180);
+            globals.setCookie('aimingTestBest', this.totalScore, 180);
 
         } else {
             this.display.innerHTML = 'Your best score is ' + this.bestScore.toString()+ '(normal mode)';
@@ -297,31 +279,10 @@ aimingtest.basicMode.prototype = {
         tableResults.style.opacity = 0;
         tableResults.innerHTML = '';
         document.getElementById('replay').innerHTML = '';
+        // Destroy emitter
+        this.emitter.destroy();
         // starts menu state
         this.state.start('menu');
-    },
-
-    setCookie: function (c_name, c_value, c_days) {
-        var d = new Date();
-        d.setTime(d.getTime() + (c_days * 24 * 60 * 60 * 1000));
-        var expires = "expires=" + d.toUTCString();
-        document.cookie = c_name + "=" + c_value + ";" + expires + ";path=/";
-    },
-
-    getCookie: function (c_name) {
-        var name = c_name + "=";
-        var decodedCookie = decodeURIComponent(document.cookie);
-        var ca = decodedCookie.split(';');
-        for (var i = 0; i < ca.length; i++) {
-            var c = ca[i];
-            while (c.charAt(0) == ' ') {
-                c = c.substring(1);
-            }
-            if (c.indexOf(name) == 0) {
-                return c.substring(name.length, c.length);
-            }
-        }
-        return "";
     }
 
 }

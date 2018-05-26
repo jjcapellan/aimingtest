@@ -48,10 +48,31 @@ body {
     margin-top: 8px;
 }
 
+#btnResetScores{
+    font-size: 1.2em;
+}
+
 .content {
     position: absolute;
     width: 960px;
     text-align: center;
+}
+
+#tblbestScores{
+    opacity:1;
+    margin: 15px auto;
+    background-color:#464128;
+    color: #cfc48c;
+    -webkit-box-shadow: 2px 2px 1px 1px #383420;
+            box-shadow: 2px 2px 1px 1px #383420;
+}
+
+#tblbestScores th{
+    text-align: center;
+}
+
+#tblbestScores td{
+    border-bottom: 0;
 }
 
 table {

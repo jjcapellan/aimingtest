@@ -19,7 +19,7 @@ aimingtest.boot.prototype = {
     },
 
     create: function () {
-        this.stage.backgroundColor = 'rgb(106,98,60)';
+        this.stage.backgroundColor = 'rgb(106,98,60)';        
         this.state.start('menu');
     }
 }

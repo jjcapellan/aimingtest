@@ -1,97 +1,15 @@
-window.onload = function () {
-    var game = new Phaser.Game(960, 540, Phaser.CANVAS, 'div_game');
 
-    game.state.add('boot', aimingtest.boot);
-    game.state.add('menu', aimingtest.menu);
-    game.state.add('inGame', aimingtest.inGame);
-    game.state.start('boot');
-};
+/**** basicMode state ****/
 
-var aimingtest = {};
+aimingtest.basicMode = function (game) {};
 
-/**** Load state ****/
+aimingtest.basicMode.prototype = function (game) {};
 
-aimingtest.boot = function (game) {};
-
-aimingtest.boot.prototype = function (game) {};
-
-aimingtest.boot.prototype = {
-
-    preload: function () {
-
-        this.load.image('target', 'assets/images/target.png');
-        this.load.image('pointer', 'assets/images/pointer.png');
-        this.load.image('particle1', 'assets/images/particle1.png');
-        this.load.image('particle2', 'assets/images/particle2.png');
-        this.load.image('particle3', 'assets/images/particle3.png');
-        this.load.audio('shot', 'assets/sounds/165271__mojomills__cap-shot-2.mp3');
-        this.load.audio('hit', 'assets/sounds/249613__otisjames__explosionsfx.mp3');
-        this.load.audio('spawn', 'assets/sounds/11221__jnr-hacksaw__zap.mp3');
-
-    },
+aimingtest.basicMode.prototype = {
 
     create: function () {
-
-        this.state.start('menu');
-
-    }
-}
-
-
-
-/**** Menu state ****/
-
-aimingtest.menu = function (game) {};
-
-aimingtest.menu.prototype = function (game) {};
-
-aimingtest.menu.prototype = {
-
-    create: function () {
-
-        this.stage.backgroundColor = 'rgb(106,98,60)';
-        document.getElementById('display').innerHTML = 'AIMING TEST V1.0';
-        var text;
-        var textStyle = {
-            font: "bold 32px Arial",
-            fill: "#fff",
-            align: "center",
-            boundsAlignH: "center",
-            boundsAlignV: "middle"
-        };
-        text = this.add.text(0, 0, 'Use your mouse button to shoot the targets\n\nClick to start', textStyle);
-        text.setTextBounds(0, 0, 960, 540);
-        this.input.onDown.add(function () {
-            this.input.onDown.removeAll();
-            var t = this;
-            var counterSeconds = 3;
-            text.setText(counterSeconds.toString());
-            counterSeconds--;
-            var counterInterval = setInterval(function () {
-                text.setText(counterSeconds.toString());
-                counterSeconds--;
-                if (counterSeconds < 0) {
-                    clearInterval(counterInterval);
-                    t.game.state.start('inGame');
-                };
-            }, 1000);
-
-        }, this);
-    }
-
-
-}
-
-
-/**** InGame state ****/
-
-aimingtest.inGame = function (game) {};
-
-aimingtest.inGame.prototype = function (game) {};
-
-aimingtest.inGame.prototype = {
-
-    create: function () {
+        // Hide menu div
+        document.getElementById('menu').style.display='none';
         // Arrays initialization
         this.shotsArray = [];
         this.hitsArray = [];
@@ -153,6 +71,7 @@ aimingtest.inGame.prototype = {
         //Target sprite definition
         this.target = this.add.sprite(this.math.between(80, 960 - 80), this.math.between(80, 540 - 80), 'target');
         this.target.anchor.setTo(0.5, 0.5);
+        this.target.radio=this.target.height/2;
         this.target.inputEnabled = true;
         this.target.visible = false;
 
@@ -179,7 +98,7 @@ aimingtest.inGame.prototype = {
                 t.shotsArray.push(distance);
 
                 // Check possible hit
-                if (isHit && distance < 70) {                       
+                if (isHit && distance <= this.target.radio) {                       
                                         
                     // Stops time to new target reset
                     t.clearTimer();
@@ -273,11 +192,11 @@ aimingtest.inGame.prototype = {
 
         // Check new record
         if (this.bestScore < this.totalScore) {
-            this.display.innerHTML = 'You got a new record !!!';
+            this.display.innerHTML = 'You got a new record !!! (normal mode)';
             this.setCookie('aimingTestBest', this.totalScore, 180);
 
         } else {
-            this.display.innerHTML = 'Your best score is ' + this.bestScore.toString();
+            this.display.innerHTML = 'Your best score is ' + this.bestScore.toString()+ '(normal mode)';
         };
 
         this.showResults();
@@ -405,7 +324,5 @@ aimingtest.inGame.prototype = {
         }
         return "";
     }
-
-
 
 }

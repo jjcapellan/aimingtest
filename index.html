@@ -8,28 +8,36 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="css/styles.min.css">
 
-  <title>Aiming Test</title>  
+  <title>Aiming Test</title>
 </head>
 
 <body id="cuerpo">
-  
-  <div id="container">  
-      <div id="header">
-          <p id="display">AIMING TEST</p>
-        </div>     
-  <!-- Contenedor del canvas del juego -->
-  <div id="div_game">
-    <div id="overlay" class="content">
-      <table id="tbl_results"></table>
-      <p id="replay"></p>
-  </div>
-  </div>
-  
-  
+
+  <div id="container">
+    <div id="header">
+      <p id="display">AIMING TEST</p>
+    </div>
+    <!-- Contenedor del canvas del juego -->
+    <div id="div_game">
+      <div id="menu">
+          <button id="btnNormalMode" class="btn centrado">NORMAL MODE</button>
+          <button id="btnEvasionMode" class="btn centrado">EVASION MODE</button>
+          <div style="text-align: center; font-size: 1.5em;color:#cfc48c;margin-top:40px;">
+            How to play: shoot to the 10 targets (click to shoot)<br>
+            Time and precision determine your final score.
+          </div>
+      </div>
+      <div id="overlay" class="content">
+        <table id="tbl_results"></table>
+        <p id="replay"></p>
+      </div>
+    </div>
+
+
   </div>
 
   <script src="js/phaser-ce/phaser.min.js"></script>
-  <script src="js/app.min.js"></script>
+  <script src="js/app.packed.js"></script>
 </body>
 
 </html>

@@ -13,6 +13,10 @@ The distance to the target center, and the shot time determine our score.
 ### Penalties:
 - Failed shot : -400 points
 
+## Screenshots
+![aimingtestscreenshot1](screenshots/screenshot1.png "Menu")
+![aimingtestscreenshot2](screenshots/screenshot2.png "Final score")
+
 ## Used tools
 This game was developed using **Visual Studio Code**, **Mongoose** as server and **Chrome** for debugging the code.
 Languages: html5, css and javascript.

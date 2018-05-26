@@ -1,0 +1,113 @@
+{
+    "frames": [{
+        "filename": "targetc",
+        "frame": {
+            "x": 0,
+            "y": 0,
+            "w": 100,
+            "h": 100
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 100,
+            "h": 100
+        },
+        "sourceSize": {
+            "w": 100,
+            "h": 100
+        }
+    }, {
+        "filename": "particle3c",
+        "frame": {
+            "x": 0,
+            "y": 102,
+            "w": 30,
+            "h": 30
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 30,
+            "h": 30
+        },
+        "sourceSize": {
+            "w": 30,
+            "h": 30
+        }
+    }, {
+        "filename": "particle2c",
+        "frame": {
+            "x": 32,
+            "y": 102,
+            "w": 24,
+            "h": 24
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 24,
+            "h": 24
+        },
+        "sourceSize": {
+            "w": 24,
+            "h": 24
+        }
+    }, {
+        "filename": "particle1c",
+        "frame": {
+            "x": 58,
+            "y": 102,
+            "w": 21,
+            "h": 21
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 21,
+            "h": 21
+        },
+        "sourceSize": {
+            "w": 21,
+            "h": 21
+        }
+    }, {
+        "filename": "pointer",
+        "frame": {
+            "x": 81,
+            "y": 102,
+            "w": 18,
+            "h": 18
+        },
+        "rotated": false,
+        "trimmed": false,
+        "spriteSourceSize": {
+            "x": 0,
+            "y": 0,
+            "w": 18,
+            "h": 18
+        },
+        "sourceSize": {
+            "w": 18,
+            "h": 18
+        }
+    }],
+    "meta": {
+        "app": "https://www.leshylabs.com/apps/sstool/",
+        "version": "Leshy SpriteSheet Tool v0.8.4",
+        "image": "spritesheet.png",
+        "size": {
+            "w": 100,
+            "h": 132
+        },
+        "scale": 1
+    }
+}

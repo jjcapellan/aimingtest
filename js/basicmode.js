@@ -52,7 +52,7 @@ aimingtest.basicMode.prototype = {
 
         // Particles emitter
         this.emitter = this.add.emitter();
-        this.emitter.makeParticles(['particle1', 'particle2', 'particle3']);
+        this.emitter.makeParticles('atl_game',['particle1c', 'particle2c', 'particle3c'],30);
         this.emitter.gravity = 0;
         this.emitter.minSpeed = 600;
         this.emitter.maxParticleSpeed = new Phaser.Point(800, 800);
@@ -61,7 +61,6 @@ aimingtest.basicMode.prototype = {
         this.emitter.lifespan = 1000;
         this.emitter.height = 90;
         this.emitter.width = 90;
-        this.emitter.maxParticles = 30;
 
         //Sound effects
         this.sndShot = this.add.audio('shot', 1, false);
@@ -69,7 +68,7 @@ aimingtest.basicMode.prototype = {
         this.sndTarget = this.add.audio('spawn', 1, false);
 
         //Target sprite definition
-        this.target = this.add.sprite(this.math.between(80, 960 - 80), this.math.between(80, 540 - 80), 'target');
+        this.target = this.add.sprite(this.math.between(80, 960 - 80), this.math.between(80, 540 - 80), 'atl_game','targetc');
         this.target.anchor.setTo(0.5, 0.5);
         this.target.radio=this.target.height/2;
         this.target.inputEnabled = true;

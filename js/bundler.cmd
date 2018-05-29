@@ -8,5 +8,6 @@ type boot.min.js >> app.packed.js
 type menu.min.js >> app.packed.js
 type basicmode.min.js >> app.packed.js
 type evasionmode.min.js >> app.packed.js
+type trackingmode.min.js >> app.packed.js
 type initstates.min.js >> app.packed.js
 echo All files packed

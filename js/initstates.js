@@ -5,5 +5,6 @@ window.onload = function () {
     game.state.add('menu', aimingtest.menu);
     game.state.add('basicMode', aimingtest.basicMode);
     game.state.add('evasionMode', aimingtest.evasionMode);
+    game.state.add('trackingMode', aimingtest.trackingMode);
     game.state.start('boot');
 };

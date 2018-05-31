@@ -41,6 +41,7 @@ aimingtest.trackingMode.prototype = {
         // Evasion tweens for target.x and target.y
         this.evasionTweenx = null;
         this.evasionTweeny = null;
+        
         // Fails counter
         this.penalties = 0;
         //Best score initialization
@@ -73,17 +74,15 @@ aimingtest.trackingMode.prototype = {
         this.target.radio = this.target.height / 2;
         this.target.inputEnabled = true;
         this.target.visible = false;
-        this.target.sp = 350; // This isn't body speed.
+        // Speed reference
+        this.target.sp = 400; // This isn't body speed.350
+        // x speed
+        this.target.spx=this.target.sp/2;
+        // y speed
+        this.target.spy=this.target.sp/3;
 
-        // Easing functions in array
-        this.easingArray = [];
-        this.easingArray.push(Phaser.Easing.Cubic.InOut);
-        this.easingArray.push(Phaser.Easing.Quintic.InOut);
-        this.easingArray.push(Phaser.Easing.Elastic.InOut);
-        this.easingArray.push(Phaser.Easing.Cubic.In);
-        this.easingArray.push(Phaser.Easing.Cubic.Out);
-        this.easingArray.push(Phaser.Easing.Back.In);
-        this.easingArray.push(Phaser.Easing.Back.InOut);
+        
+        this.tweenMargin=this.target.radio*2;
 
         this.sndTarget.play();
         this.target.reset(this.math.between(80, 600), this.math.between(80, 350));
@@ -196,22 +195,20 @@ aimingtest.trackingMode.prototype = {
         }
 
         if (this.target.x > this.world.width / 2) {
-            tx = Phaser.Math.between(this.target.radio, this.world.width / 2 - this.target.radio);
+            tx = Phaser.Math.between(this.tweenMargin, this.world.width / 2 - this.target.radio);
 
         } else {
-            tx = Phaser.Math.between(this.world.width / 2 + this.target.radio, this.world.width - this.target.radio);
+            tx = Phaser.Math.between(this.world.width / 2 + this.target.radio, this.world.width - this.tweenMargin);
         };
 
 
-        duration = Math.ceil((Math.abs(this.target.x - tx) * 1000) / this.target.sp);
-
-        var rd = Phaser.Math.between(0, 6);
+        duration = Math.ceil((Math.abs(this.target.x - tx) * 1000) / this.target.spx);
 
 
 
         this.evasionTweenx = this.add.tween(this.target).to({
             x: tx
-        }, duration, t.easingArray[rd]).start();
+        }, duration, Phaser.Easing.Back.InOut).start();
 
         this.evasionTweenx.onComplete.addOnce(t.resetTargetx, this);
 
@@ -227,18 +224,15 @@ aimingtest.trackingMode.prototype = {
             this.evasionTweeny.stop();
         }
 
-        ty = Phaser.Math.between(this.target.radio, this.world.height - this.target.radio);
+        ty = Phaser.Math.between(this.tweenMargin, this.world.height - this.tweenMargin);
 
 
-        duration = Math.ceil((Math.abs(this.target.y - ty) * 1000) / (this.target.sp / 2));
-
-        var rd = Phaser.Math.between(0, 6);
-
+        duration = Math.ceil((Math.abs(this.target.y - ty) * 1000) / this.target.spy);
 
 
         this.evasionTweeny = this.add.tween(this.target).to({
             y: ty
-        }, duration, t.easingArray[rd]).start();
+        }, duration, Phaser.Easing.Back.InOut).start();
 
         this.evasionTweenx.onComplete.addOnce(t.resetTargety, this);
 

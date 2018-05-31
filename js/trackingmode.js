@@ -9,27 +9,27 @@ aimingtest.trackingMode.prototype = {
     create: function () {
 
         // Timer to control hits
-        this.timerHits={
+        this.timerHits = {
             isOn: false,
-            start: function(){
-                this.t0=performance.now();
+            start: function () {
+                this.t0 = performance.now();
             },
-            getTime: function(){
-                this.t1=performance.now();
-                var elapsedTimeMs=Math.ceil(this.t1-this.t0);
+            getTime: function () {
+                this.t1 = performance.now();
+                var elapsedTimeMs = Math.ceil(this.t1 - this.t0);
                 return elapsedTimeMs;
             }
         };
 
         // Timer to control fails
-        this.timerFails={
+        this.timerFails = {
             isOn: false,
-            start: function(){
-                this.t0=performance.now();
+            start: function () {
+                this.t0 = performance.now();
             },
-            getTime: function(){
-                this.t1=performance.now();
-                var elapsedTimeMs=Math.ceil(this.t1-this.t0);
+            getTime: function () {
+                this.t1 = performance.now();
+                var elapsedTimeMs = Math.ceil(this.t1 - this.t0);
                 return elapsedTimeMs;
             }
         }
@@ -38,14 +38,11 @@ aimingtest.trackingMode.prototype = {
         this.distances = 0;
         // Distance samples
         this.samples = 0;
-
-        // Shooting (bool)
-        this.isShooting = false;
         // Evasion tweens for target.x and target.y
         this.evasionTweenx = null;
         this.evasionTweeny = null;
         // Fails counter
-        this.penalties=0;
+        this.penalties = 0;
         //Best score initialization
         var cookie = globals.getCookie('aimingTrackingBest1');
         this.bestScore = (cookie != '') ? parseInt(cookie) : 0;
@@ -93,26 +90,44 @@ aimingtest.trackingMode.prototype = {
         this.resetTargetx();
         this.resetTargety();
 
-        // OnDown event
-        this.input.onDown.add(function () {
-            t.isShooting = true;
-        }, this);
-
         // OnUp event
         this.input.onUp.add(function () {
+            if(!t.onUpblocked){
 
-            t.isShooting = false;
+                if (t.timerHits.isOn) {
+                    this.score += Math.ceil(this.timerHits.getTime() / 100);
+                    this.timerHits.isOn = false;
+                };
 
-            if (t.timerHits.isOn) {
-                this.score += Math.ceil(this.timerHits.getTime() / 100);
-                this.timerHits.isOn = false;
-            };
-
-            if(this.timerFails.isOn){
-                this.penalties+= this.timerFails.getTime()/100;
-                this.timerFails.isOn=false;
+                if (this.timerFails.isOn) {
+                    this.penalties += this.timerFails.getTime() / 100;
+                    this.timerFails.isOn = false;
+                };
             };
         }, this);
+        
+        // This avoids automatic onUp event when pointer left bounds.
+        // When pointer exits bounds this happens:
+        // 1º) event mouseout
+        // 2ª) event mouseup
+        // 3º) event mouseout
+        // When pointer enters bounds:
+        // 1º) event mouseover
+        // 2ª) event mouseup
+        // 3º) event mouseover
+
+        this.onUpblocked=false;
+        this.firstMouseOver=false;
+        
+        this.input.mouse.mouseOutCallback=function(){t.onUpblocked=true;};
+        this.input.mouse.mouseOverCallback=function(){
+            t.firstMouseOver=!t.firstMouseOver;
+            if(!t.firstMouseOver){
+                t.onUpblocked=false;
+            };        
+        };
+
+
 
         // Timer event. Take distances every 100ms.
         this.timerEvent = this.time.events.loop(100,
@@ -133,8 +148,10 @@ aimingtest.trackingMode.prototype = {
     update: function () {
 
         var t = this;
+        // This updates pointer state when is stopped. Avoids incorrect results in this.target.input.pointerOver()
+        this.input.activePointer.dirty = true;
 
-        if (this.isShooting) {
+        if (this.input.activePointer.isDown) {
             if (this.target.input.pointerOver()) {
 
                 if (t.emitter.counts.emitted == 0) {
@@ -148,11 +165,11 @@ aimingtest.trackingMode.prototype = {
                     this.timerHits.isOn = true;
                 };
 
-                if(this.timerFails.isOn){
-                    this.penalties+= this.timerFails.getTime()/100;
-                    this.timerFails.isOn=false;
+                if (this.timerFails.isOn) {
+                    this.penalties += this.timerFails.getTime() / 100;
+                    this.timerFails.isOn = false;
                 };
-                
+
                 this.sndHit.play();
             } else {
                 if (this.timerHits.isOn) {
@@ -160,9 +177,9 @@ aimingtest.trackingMode.prototype = {
                     this.timerHits.isOn = false;
                 };
 
-                if(!this.timerFails.isOn){
+                if (!this.timerFails.isOn) {
                     this.timerFails.start();
-                    this.timerFails.isOn=true;
+                    this.timerFails.isOn = true;
                 };
             }
         }
@@ -238,6 +255,10 @@ aimingtest.trackingMode.prototype = {
         this.time.events.remove(this.timerEvent);
         clearTimeout(this.gameOverTimer);
 
+        //clear other callbacks
+        this.input.mouse.mouseOutCallback=null;
+        this.input.mouse.mouseOverCallback=null;
+
 
         this.setTotalScore();
 
@@ -255,7 +276,7 @@ aimingtest.trackingMode.prototype = {
     },
 
     setTotalScore: function () {
-        this.totalScore = Math.ceil(this.score-this.penalties-(60-(this.score+this.penalties)/10)*0.5);
+        this.totalScore = Math.ceil(this.score - this.penalties - (60 - (this.score + this.penalties) / 10) * 0.5);
     },
 
     showResults: function () {
@@ -278,9 +299,9 @@ aimingtest.trackingMode.prototype = {
 
         // Calcs
         var usefullTime = Math.ceil((this.score / 10));
-        var wastedTime=Math.ceil((this.penalties/10));
+        var wastedTime = Math.ceil((this.penalties / 10));
         var averageDistance = Math.ceil(this.distances / this.samples);
-        var idleTime=60-usefullTime-wastedTime;
+        var idleTime = 60 - usefullTime - wastedTime;
 
         // 2º row
         var row = document.createElement('tr');
@@ -291,9 +312,9 @@ aimingtest.trackingMode.prototype = {
         cell.textContent = usefullTime.toString() + ' secs';
         row.appendChild(cell);
         var cell = document.createElement('td');
-        cell.textContent = '+'+Math.ceil(this.score).toString();
+        cell.textContent = '+' + Math.ceil(this.score).toString();
         row.appendChild(cell);
-        tableResults.appendChild(row);        
+        tableResults.appendChild(row);
 
         // 3º row
         var row = document.createElement('tr');
@@ -304,7 +325,7 @@ aimingtest.trackingMode.prototype = {
         cell.textContent = wastedTime.toString() + ' secs';
         row.appendChild(cell);
         var cell = document.createElement('td');
-        cell.textContent = '-'+Math.ceil(this.penalties).toString();
+        cell.textContent = '-' + Math.ceil(this.penalties).toString();
         row.appendChild(cell);
         tableResults.appendChild(row);
 
@@ -317,7 +338,7 @@ aimingtest.trackingMode.prototype = {
         cell.textContent = idleTime.toString() + ' secs';
         row.appendChild(cell);
         var cell = document.createElement('td');
-        cell.textContent = '-'+Math.ceil(idleTime/2).toString();
+        cell.textContent = '-' + Math.ceil(idleTime / 2).toString();
         row.appendChild(cell);
         tableResults.appendChild(row);
 
@@ -328,7 +349,7 @@ aimingtest.trackingMode.prototype = {
         cell.textContent = 'AVERAGE DISTANCE';
         row.appendChild(cell);
         var cell = document.createElement('td');
-        cell.textContent = averageDistance+' px';
+        cell.textContent = averageDistance + ' px';
         row.appendChild(cell);
         tableResults.appendChild(row);
 
